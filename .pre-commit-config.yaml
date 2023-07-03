@@ -20,4 +20,3 @@ repos:
         entry: pflake8
         additional_dependencies: [pyproject-flake8]
         args: [--config, async_api/pyproject.toml]
-

@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-./wait-for-it.sh
+./infra/backend/wait-for-it.sh
 
 if [ "$1" = "pytest" ]
 then
-  pytest -vv
+  pytest
 elif [ $ENVIRONMENT == "development" ]; then
   uvicorn run:app --host 0.0.0.0 --port 8000 --reload
 else

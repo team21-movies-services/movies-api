@@ -28,11 +28,13 @@ RUN poetry install --no-root
 
 COPY --chown=${USER}:${GROUP} . .
 
-RUN chmod +x './wait-for-it.sh' && \
-    chmod +x './entrypoint.sh'
+RUN ls
+
+RUN chmod +x 'infra/backend/wait-for-it.sh' && \
+    chmod +x 'infra/backend/entrypoint.sh'
 
 USER ${USER}
 
 EXPOSE 8000
 
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["infra/backend/entrypoint.sh"]

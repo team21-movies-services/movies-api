@@ -14,26 +14,28 @@ services:
       - ALLOW_EMPTY_PASSWORD=yes
 
   api:
-    container_name: test-async-api-container
-    image: async-api-image
-    build: ../../.
+    container_name: test-movies-api-container
+    image: movies-api-image
+    build:
+      context: .
+      dockerfile: infra/backend/Dockerfile
     volumes:
-      - ../../src:/app/src
-      - ../../tests:/app/tests
+      - ./src:/app/src
+      - ./tests:/app/tests
     depends_on:
       - elasticsearch
       - redis
     env_file:
-      - ../../.env
+      - ./.env
 
   tests:
     container_name: tests-container
-    image: async-api-image
+    image: movies-api-image
     volumes:
-      - ../../src:/app/src
-      - ../../tests:/app/tests
+      - ./src:/app/src
+      - ./tests:/app/tests
     command: pytest
     depends_on:
       - api
     env_file:
-      - ../../.env
+      - ./.env

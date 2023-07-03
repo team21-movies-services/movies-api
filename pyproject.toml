@@ -1,10 +1,9 @@
 [tool.poetry]
-name = "async-api-team-9"
+name = "movies-api"
 version = "0.1.0"
 description = ""
-authors = ["Mikhail Spiridonov <Muxa2793@mail.ru>"]
+authors = ["Mikhail Spiridonov <mspiridonov2706@gmail.com>"]
 readme = "README.md"
-packages = [{include = "async_api_team_9"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
