@@ -1,0 +1,23 @@
+files: ^async_api/
+repos:
+  - repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        name: isort (python)
+        args:  [--reverse-relative, --line-length=120]
+        files: .
+  
+  - repo: https://github.com/psf/black
+    rev: 22.10.0
+    hooks:
+      - id: black
+
+  - repo: https://github.com/pycqa/flake8
+    rev: 5.0.4
+    hooks:
+      - id: flake8
+        entry: pflake8
+        additional_dependencies: [pyproject-flake8]
+        args: [--config, async_api/pyproject.toml]
+

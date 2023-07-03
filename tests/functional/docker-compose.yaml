@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  elasticsearch:
+    container_name: test-es-container
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+    environment:
+      - "discovery.type=single-node"
+
+  redis:
+    container_name: test-redis-container
+    image: bitnami/redis:latest
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+
+  api:
+    container_name: test-async-api-container
+    image: async-api-image
+    build: ../../.
+    volumes:
+      - ../../src:/app/src
+      - ../../tests:/app/tests
+    depends_on:
+      - elasticsearch
+      - redis
+    env_file:
+      - ../../.env
+
+  tests:
+    container_name: tests-container
+    image: async-api-image
+    volumes:
+      - ../../src:/app/src
+      - ../../tests:/app/tests
+    command: pytest
+    depends_on:
+      - api
+    env_file:
+      - ../../.env
