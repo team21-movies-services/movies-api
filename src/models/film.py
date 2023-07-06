@@ -17,7 +17,7 @@ class Film(BaseOrjsonModel):
 
 
 class FilmDetail(Film):
-    description: str
+    description: str | None
     genre: list[Genre]
     actors: list[FilmPerson]
     writers: list[FilmPerson]

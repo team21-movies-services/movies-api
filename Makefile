@@ -1,6 +1,9 @@
+create_network:
+	@docker network create movies-network 2>/dev/null || echo "movies-network is up-to-date"
+
 # DEVELOPMENT
 .PHONY: up-local
-up-local:
+up-local: create_network
 	@docker-compose -f docker-compose.local.yaml up --build
 
 .PHONY: build-local

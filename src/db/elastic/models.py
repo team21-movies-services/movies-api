@@ -58,7 +58,7 @@ class FilmDocument(BaseModel):
     uuid: UUID4
     imdb_rating: float
     title: str
-    description: str = ""
+    description: str | None = ""
     genre: list[FilmDocumentGenrePart] = Field(default_factory=list)
     actors_names: list[str] = Field(default_factory=list)
     actors: list[FilmDocumentPersonPart] = Field(default_factory=list)
