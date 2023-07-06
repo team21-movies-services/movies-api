@@ -44,11 +44,14 @@ services:
       - "8002:8002"
     networks:
       - movies-network
+      - auth-network
 
 networks:
   movies-network:
     external:
       name: movies-network
+  auth-network:
+    external: true
 
 volumes:
   db_volume:

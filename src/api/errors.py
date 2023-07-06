@@ -12,6 +12,8 @@ class APIErrorDetail(StrEnum):
     PERSON_NOT_FOUND = "person not found"
     ELASTIC_SEARCH_AFTER = "incorrect value for search_after field"
 
+    TOKEN_EXPIRED = "Error validating access token: Session has expired"
+
 
 async def elasticsearch_handler(request: Request, exc: RequestError) -> Response:
     """Обработчик ошибок elasticsearch."""
