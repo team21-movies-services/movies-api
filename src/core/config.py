@@ -2,7 +2,7 @@ import os
 from functools import lru_cache
 from logging import config as logging_config
 
-from pydantic import BaseSettings, Field
+from pydantic import BaseSettings
 
 from src.core.logger import LOGGING
 
@@ -31,7 +31,7 @@ class Settings(BaseSettings):
     elastic_host: str = "elasticsearch"
     elastic_port: int = 9200
 
-    jwt_secret_key: str = Field(default='asdnjklnjkl123412bjk4bjk', env='JWT_SECRET_KEY')
+    jwt_secret_key: str
 
 
 @lru_cache()
