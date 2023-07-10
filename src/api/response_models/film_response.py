@@ -29,7 +29,7 @@ class Film(BaseModel):
     uuid: UUID4
     title: str
     imdb_rating: float
-    description: str
+    description: str | None
     genre: list[FilmGenre]
     actors: list[FilmPerson]
     writers: list[FilmPerson]

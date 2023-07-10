@@ -23,7 +23,7 @@ cp ./.env.example ./.env
 make up-local
 ```
 
-4) go = http://localhost/api/openapi
+4) go = http://localhost:8002/api/openapi
 
 # Testing
 ```bash

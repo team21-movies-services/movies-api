@@ -31,6 +31,8 @@ class Settings(BaseSettings):
     elastic_host: str = "elasticsearch"
     elastic_port: int = 9200
 
+    jwt_secret_key: str
+
 
 @lru_cache()
 def get_settings():
