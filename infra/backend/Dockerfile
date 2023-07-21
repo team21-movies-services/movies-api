@@ -1,4 +1,4 @@
-FROM python:3.11
+FROM python:3.11-slim
 
 ARG UID="1000" \
     GID="1000" \
@@ -8,7 +8,7 @@ ARG UID="1000" \
 
 RUN apt-get update && \
     apt-get install -y && \
-    apt install redis-tools -y && \
+    apt install redis-tools curl -y && \
     curl -sSL https://install.python-poetry.org | python3 -
 
 WORKDIR ${WORKDIR}
