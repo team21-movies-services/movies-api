@@ -6,9 +6,11 @@ from pydantic import UUID4
 
 from src.api.errors import APIErrorDetail
 from src.api.request_models.person_request import PersonSearchQueryParams
-from src.api.response_models.film_response import FilmListItem
-from src.api.response_models.person_response import PersonsSearchResponse
-from src.models.person import Person
+from src.api.response_models.film_response import FilmDetailResponse
+from src.api.response_models.person_response import (
+    PersonFilmResponse,
+    PersonsSearchResponse,
+)
 from src.models.search import FilmsSearchParams, PersonSearchParams
 from src.services.films import FilmsService, get_films_service
 from src.services.persons import PersonService, get_person_service
@@ -48,7 +50,7 @@ async def persons_search(
 async def person_details(
     person_uuid: UUID4,
     person_service: PersonService = Depends(get_person_service),
-) -> Person:
+) -> PersonFilmResponse:
     person = await person_service.get_by_id(person_uuid)
     if not person:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=APIErrorDetail.PERSON_NOT_FOUND)
@@ -64,7 +66,7 @@ async def person_details(
 async def person_films(
     person_uuid: UUID4,
     films_service: FilmsService = Depends(get_films_service),
-) -> list[FilmListItem]:
+) -> list[FilmDetailResponse]:
     film_search_params = FilmsSearchParams(person=person_uuid)
     film_details = await films_service.query(film_search_params)
     return film_details

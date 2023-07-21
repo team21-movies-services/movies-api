@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends
 
+from src.dependencies.auth import get_auth_user
+
 from .films import router as films_router
 from .genres import router as genres_router
 from .persons import router as persons_router
 from .status import router as status_router
-from src.dependencies.auth import get_auth_user
 
 api_v1_router = APIRouter(dependencies=[Depends(get_auth_user)])
 

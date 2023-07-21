@@ -96,7 +96,7 @@ class SearchQueryBuilder:
                         "fuzziness": "auto",
                     },
                 },
-            }
+            },
         ]
 
     def get_sort_fields(self) -> Type[StrEnum] | None:
@@ -134,7 +134,7 @@ class FilmSearchQueryBuilder(SearchQueryBuilder):
                             "match": {"genre.uuid": str(self._genre)},
                         },
                     },
-                }
+                },
             )
 
         if self._person is not None:
@@ -146,23 +146,23 @@ class FilmSearchQueryBuilder(SearchQueryBuilder):
                                 "nested": {
                                     "path": "actors",
                                     "query": {"bool": {"must": [{"match": {"actors.uuid": self._person}}]}},
-                                }
+                                },
                             },
                             {
                                 "nested": {
                                     "path": "directors",
                                     "query": {"bool": {"must": [{"match": {"directors.uuid": self._person}}]}},
-                                }
+                                },
                             },
                             {
                                 "nested": {
                                     "path": "writers",
                                     "query": {"bool": {"must": [{"match": {"writers.uuid": self._person}}]}},
-                                }
+                                },
                             },
                         ],
                     },
-                }
+                },
             )
 
         return query_parts

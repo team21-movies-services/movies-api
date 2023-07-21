@@ -1,21 +1,37 @@
 repos:
-  - repo: https://github.com/pycqa/isort
-    rev: 5.12.0
+-   repo: local
     hooks:
-      - id: isort
-        name: isort (python)
-        args:  [--reverse-relative, --line-length=120]
-        files: .
-  
-  - repo: https://github.com/psf/black
-    rev: 22.10.0
-    hooks:
-      - id: black
+    -   id: flake8
+        name: flake8
+        description: flake8
+        entry: env -i PATH=./bin:./.venv/bin:./venv/bin python3 -m flake8
+        language: python
+        types: [python]
 
-  - repo: https://github.com/pycqa/flake8
-    rev: 5.0.4
+-   repo: local
     hooks:
-      - id: flake8
-        entry: pflake8
-        additional_dependencies: [pyproject-flake8]
-        args: [--config, pyproject.toml]
+    -   id: mypy
+        name: mypy
+        description: mypy
+        entry: env -i PATH=./bin:./.venv/bin:./venv/bin python3 -m mypy
+        args: ["--config-file=./mypy.ini"]
+        language: python
+        types: [python]
+
+-   repo: local
+    hooks:
+    -   id: black
+        name: black
+        description: black
+        entry: env -i PATH=./bin:./.venv/bin:./venv/bin python3 -m black
+        language: python
+        types: [python]
+
+-   repo: local
+    hooks:
+    -   id: isort
+        name: isort
+        description: isort
+        entry: env -i PATH=./bin:./.venv/bin:./venv/bin python3 -m isort
+        language: python
+        types: [python]
