@@ -26,7 +26,8 @@ async def get_auth_user(
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
     except auth_exceptions.TokenExpiredException:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail={"error": {"message": APIErrorDetail.TOKEN_EXPIRED}}
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={"error": {"message": APIErrorDetail.TOKEN_EXPIRED}},
         )
     logger.debug(f"User request: user_id - {auth_data.user_id}")
     return auth_data

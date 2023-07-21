@@ -16,7 +16,8 @@ async def session():
 def make_get_request(session: aiohttp.ClientSession):
     async def inner(endpoint: str, params: dict | None = None) -> HTTPResponse:
         url = f"{test_settings.service_url}{endpoint}"
-        async with session.get(url, params=params) as response:
+        auth_header = {"Authorization": test_settings.test_user_jwt}
+        async with session.get(url, params=params, headers=auth_header) as response:
             return HTTPResponse(
                 body=await response.json(),
                 status=response.status,

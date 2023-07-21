@@ -4,10 +4,15 @@ from elasticsearch import AsyncElasticsearch, NotFoundError
 from fastapi import Depends
 from pydantic import UUID4
 
-from src.db.abstract import AbstractFilmRepository, AbstractGenreRepository, AbstractPersonRepository, SearchAfterType
-from src.models.film import FilmDetail
-from src.models.genre import Genre
-from src.models.person import Person
+from src.api.response_models.film_response import FilmDetailResponse, FilmResponse
+from src.api.response_models.genre_response import GenreResponse
+from src.api.response_models.person_response import PersonFilmResponse
+from src.db.abstract import (
+    AbstractFilmRepository,
+    AbstractGenreRepository,
+    AbstractPersonRepository,
+    SearchAfterType,
+)
 from src.models.search import FilmsSearchParams, PersonSearchParams
 
 from .adapter import get_elastic
@@ -21,15 +26,16 @@ class ElasticsearchFilmRepository(AbstractFilmRepository):
     def __init__(self, elastic: AsyncElasticsearch):
         self._elastic = elastic
 
-    async def get_by_id(self, film_id: UUID4) -> FilmDetail | None:
+    async def get_by_id(self, film_id: UUID4) -> FilmDetailResponse | None:
         try:
             response = await self._elastic.get(self._INDEX, str(film_id))
         except NotFoundError:
             return None
+        if response:
+            return FilmDocument(**response["_source"]).to_detail_model()
+        return None
 
-        return FilmDocument(**response["_source"]).to_domain_model()
-
-    async def query(self, search_query_params: FilmsSearchParams) -> list[FilmDetail]:
+    async def query(self, search_query_params: FilmsSearchParams) -> list[FilmDetailResponse]:
         resp = await self._elastic.search(
             index=self._INDEX,
             body=FilmSearchQueryBuilder(search_query_params).build(),
@@ -37,19 +43,19 @@ class ElasticsearchFilmRepository(AbstractFilmRepository):
 
         film_documents = [FilmDocument(**response_hit["_source"]) for response_hit in resp["hits"]["hits"]]
 
-        return [film_document.to_domain_model() for film_document in film_documents]
+        return [film_document.to_detail_model() for film_document in film_documents]
 
     async def query_with_pagination(
         self,
         search_query_params: FilmsSearchParams,
-    ) -> tuple[int, SearchAfterType, list[FilmDetail]]:
+    ) -> tuple[int, SearchAfterType, list[FilmResponse]]:
         resp = await self._elastic.search(
             index=self._INDEX,
             body=FilmSearchQueryBuilder(search_query_params).build(),
         )
 
         film_documents = [FilmDocument(**response_hit["_source"]) for response_hit in resp["hits"]["hits"]]
-        domain_films = [film_document.to_domain_model() for film_document in film_documents]
+        domain_films = [film_document.to_film_model() for film_document in film_documents]
         pages = math.ceil(resp["hits"]["total"]["value"] / search_query_params.page_size)
         search_after = None
         if resp["hits"].get("hits"):
@@ -64,18 +70,19 @@ class ElasticsearchPersonRepository(AbstractPersonRepository):
     def __init__(self, elastic: AsyncElasticsearch):
         self._elastic = elastic
 
-    async def get_by_id(self, person_id: UUID4) -> Person | None:
+    async def get_by_id(self, person_id: UUID4) -> PersonFilmResponse | None:
         try:
             response = await self._elastic.get(self._INDEX, str(person_id))
         except NotFoundError:
             return None
-
-        return PersonDocument(**response["_source"]).to_domain_model()
+        if response:
+            return PersonDocument(**response["_source"]).to_domain_model()
+        return None
 
     async def query_with_pagination(
         self,
         search_query_params: PersonSearchParams,
-    ) -> tuple[int, SearchAfterType, list[Person]]:
+    ) -> tuple[int, SearchAfterType, list[PersonFilmResponse]]:
         resp = await self._elastic.search(
             index=self._INDEX,
             body=PersonSearchQueryBuilder(search_query_params).build(),
@@ -98,7 +105,7 @@ class ElasticsearchGenreRepository(AbstractGenreRepository):
     def __init__(self, elastic: AsyncElasticsearch):
         self._elastic = elastic
 
-    async def get_by_id(self, genre_id: UUID4) -> Genre | None:
+    async def get_by_id(self, genre_id: UUID4) -> GenreResponse | None:
         try:
             response = await self._elastic.get(self._INDEX, str(genre_id))
         except NotFoundError:
@@ -106,7 +113,7 @@ class ElasticsearchGenreRepository(AbstractGenreRepository):
 
         return FilmDocumentGenrePart(**response["_source"]).to_domain_model()
 
-    async def query(self) -> list[Genre]:
+    async def query(self) -> list[GenreResponse]:
         resp = await self._elastic.search(index=self._INDEX)
 
         genre_documents = [

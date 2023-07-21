@@ -5,8 +5,14 @@ from fastapi_cache.decorator import cache
 from pydantic import UUID4
 
 from src.api.errors import APIErrorDetail
-from src.api.request_models.film_request import FilmsListQueryParams, FilmsSearchQueryParams
-from src.api.response_models.film_response import Film, FilmsSearchResponse
+from src.api.request_models.film_request import (
+    FilmsListQueryParams,
+    FilmsSearchQueryParams,
+)
+from src.api.response_models.film_response import (
+    FilmDetailResponse,
+    FilmsSearchResponse,
+)
 from src.models.search import FilmsSearchParams
 from src.services.films import FilmsService, get_films_service
 
@@ -44,7 +50,7 @@ async def films_search(
 async def film_details(
     film_uuid: UUID4,
     films_service: FilmsService = Depends(get_films_service),
-) -> Film:
+) -> FilmDetailResponse:
     film = await films_service.get_by_id(film_uuid)
     if not film:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=APIErrorDetail.FILM_NOT_FOUND)

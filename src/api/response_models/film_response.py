@@ -2,8 +2,12 @@ from typing import Any
 
 from pydantic import UUID4, BaseModel
 
+from .common import BaseOrjsonModel
+from .genre_response import GenreResponse
+from .person_response import PersonResponse
 
-class FilmListItem(BaseModel):
+
+class FilmResponse(BaseOrjsonModel):
     uuid: UUID4
     title: str
     imdb_rating: float
@@ -12,25 +16,12 @@ class FilmListItem(BaseModel):
 class FilmsSearchResponse(BaseModel):
     pages: int
     search_after: list[Any] | None
-    items: list[FilmListItem]
+    items: list[FilmResponse]
 
 
-class FilmGenre(BaseModel):
-    uuid: UUID4
-    name: str
-
-
-class FilmPerson(BaseModel):
-    uuid: UUID4
-    full_name: str
-
-
-class Film(BaseModel):
-    uuid: UUID4
-    title: str
-    imdb_rating: float
+class FilmDetailResponse(FilmResponse):
     description: str | None
-    genre: list[FilmGenre]
-    actors: list[FilmPerson]
-    writers: list[FilmPerson]
-    directors: list[FilmPerson]
+    genre: list[GenreResponse]
+    actors: list[PersonResponse]
+    writers: list[PersonResponse]
+    directors: list[PersonResponse]

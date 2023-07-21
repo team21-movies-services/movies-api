@@ -1,7 +1,12 @@
 from fastapi import Query
 from pydantic import BaseModel
 
-from src.models.search import DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, MIN_PAGE_NUMBER, MIN_PAGE_SIZE
+from src.models.search import (
+    DEFAULT_PAGE_NUMBER,
+    DEFAULT_PAGE_SIZE,
+    MIN_PAGE_NUMBER,
+    MIN_PAGE_SIZE,
+)
 
 
 class PageBasedIteration(BaseModel):

@@ -29,8 +29,10 @@ def create_app():
 
     @app.on_event("shutdown")
     async def shutdown():
-        await redis_adapter.redis.close()
-        await es_adapter.es.close()
+        if redis_adapter.redis:
+            await redis_adapter.redis.close()
+        if es_adapter.es:
+            await es_adapter.es.close()
 
     app.include_router(api_v1_router, prefix="/api/v1")
 
