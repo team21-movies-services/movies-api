@@ -21,7 +21,7 @@ uninstall-local:
 
 # TESTS
 .PHONY: up-tests
-tests:
+up-tests:
 	@docker-compose -f docker-compose.tests.yaml up --build
 
 .PHONY: uninstall-tests
