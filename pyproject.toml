@@ -17,6 +17,7 @@ fastapi-cache2 = {extras = ["redis"], version = "^0.2.1"}
 gunicorn = "20.1.0"
 fastapi = "^0.95.0"
 pyjwt = "^2.7.0"
+flake8-html = "^0.4.3"
 
 
 [tool.poetry.group.tests.dependencies]
