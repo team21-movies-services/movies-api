@@ -1,0 +1,86 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Code check with a variety of Python versions
+
+on: [pull_request]
+
+jobs:
+  linter:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11"]
+
+    steps:
+    - name: Clone code
+      uses: actions/checkout@v3
+      
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+        
+    - name: Установка Poetry
+      uses: snok/install-poetry@v1
+      with:
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+        installer-parallel: true
+        virtualenvs-path: .venv
+
+    - name: "Установка зависимостей"
+      run: poetry install --no-root --only dev || true
+      
+    - name: "Запуск линтеров: flake mypy"
+      run: |
+        poetry run flake8 ./src --format=html > flake-report.html
+        mkdir -p flake-reports
+        mv flake-report.html flake-reports/
+        poetry run mypy ./src
+
+    - name: "Запуск линтеров: black, isort"
+      run: |
+        poetry run black ./src --check > black-report.txt
+        poetry run isort ./src --check
+
+    - name: Run black on full codebase
+      uses: psf/black@stable
+
+    - name: Сохранение HTML-отчетов
+      uses: actions/upload-artifact@v2
+      with:
+        name: lint-reports
+        path: |
+          flake-reports
+          black-report.txt
+
+  send_notification:
+    needs: linter
+    runs-on: ubuntu-latest
+    if: ${{ success() }}
+
+    steps:
+      - name: Get PR author
+        id: pr_info
+        run: | 
+          pr_number=$(jq -r '.pull_request.number' $GITHUB_EVENT_PATH)
+          pr_title=$(jq -r '.pull_request.title' $GITHUB_EVENT_PATH)
+          pr_author=$(jq -r '.pull_request.user.login' $GITHUB_EVENT_PATH)
+
+          echo "::set-output name=number::$pr_number"
+          echo "::set-output name=title::$pr_title"
+          echo "::set-output name=author::$pr_author"
+
+      - name: Отправка уведомления в Telegram
+        uses: "appleboy/telegram-action@v0.1.1"
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.BOT_TOKEN }}
+          args: |
+            New pull-request from ${{ steps.pr_info.outputs.author }} in ${{ github.repository }}. Code check have passed.
+            PR title: ${{ steps.pr_info.outputs.title }}
+            PR URL: ${{ github.event.pull_request.html_url }}
+
+
